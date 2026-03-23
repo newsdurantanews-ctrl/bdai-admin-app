@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "930945592495",
+    "project_id": "bdai-by-azad",
+    "storage_bucket": "bdai-by-azad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930945592495:android:f7d56b9c385b5cd052f85a",
+        "android_client_info": {
+          "package_name": "com.bdai.azad.admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930945592495-orqvmnv2pp2ipggsekk6m80727n42dp7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8DVG1Ds5nPnkv3CQ2k4AB2sYL0uieLz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930945592495-orqvmnv2pp2ipggsekk6m80727n42dp7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,13 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# ❌ Keystore কখনো Git এ যাবে না
+*.keystore
+*.jks

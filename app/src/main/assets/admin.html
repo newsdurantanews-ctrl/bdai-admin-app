@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>BDAi Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070f;--bg2:#0d0d1a;--bg3:#111120;--card:#141428;--card2:#1a1a30;--b:#1e1e38;--b2:#262645;--acc:#00d4aa;--acc2:#0099ff;--gold:#f59e0b;--org:#c96e3f;--txt:#dde0f5;--mut:#56568a;--green:#00d4aa;--red:#ff4060;--yellow:#ffaa00;--font:'Noto Sans Bengali',sans-serif;--sora:'Sora',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:var(--font);background:var(--bg);color:var(--txt);font-size:14px}
+::-webkit-scrollbar{width:2px;height:2px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;background:var(--bg);z-index:1}.screen.on{display:flex}
+.fade{animation:fadeUp .25s ease}@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* TOPBAR */
+.tb{height:50px;background:var(--bg2);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 13px;gap:8px;flex-shrink:0}
+.tb-logo{width:28px;height:28px;object-fit:contain;border-radius:6px}
+.tb-name{font-family:var(--sora);font-weight:700;font-size:13.5px;color:var(--txt)}
+.tb-back{background:none;border:none;font-size:20px;color:var(--mut);cursor:pointer;padding:4px}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.rtag{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;border:1px solid}
+.rt-sa{background:rgba(245,158,11,.15);color:var(--gold);border-color:rgba(245,158,11,.2)}
+.rt-a{background:rgba(0,212,170,.15);color:var(--acc);border-color:rgba(0,212,170,.2)}
+.rt-d{background:rgba(0,153,255,.15);color:var(--acc2);border-color:rgba(0,153,255,.2)}
+
+/* BOTTOM NAV */
+.bnav{height:52px;background:var(--bg2);border-top:1px solid var(--b);display:flex;flex-shrink:0}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;padding:4px}
+.bnav-btn:active{background:rgba(0,212,170,.05)}.bnav-btn .bi{font-size:19px}.bnav-btn .bl{font-size:9px;color:var(--mut)}.bnav-btn.on .bl{color:var(--acc);font-weight:700}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* LOGIN */
+#a-login{justify-content:center;align-items:center;padding:32px 24px;gap:0}
+.al-logo{width:70px;height:70px;object-fit:contain;margin-bottom:20px;filter:drop-shadow(0 4px 16px rgba(0,212,170,.3))}
+.al-title{font-family:var(--sora);font-size:22px;font-weight:800;color:var(--txt);text-align:center;margin-bottom:6px}
+.al-sub{font-size:13px;color:var(--mut);text-align:center;line-height:1.7;margin-bottom:28px}
+.ag-btn{width:100%;padding:13px;background:#fff;border:none;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-size:13.5px;font-weight:600;color:#333;box-shadow:0 2px 10px rgba(0,0,0,.3);transition:all .2s;margin-bottom:12px}
+.ag-btn:active{transform:scale(.98)}
+.not-admin-msg{text-align:center;padding:20px;font-size:13px;color:var(--red)}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+.sbox{background:var(--card);border:1px solid var(--b2);border-radius:11px;padding:12px;text-align:center}
+.sn{font-family:var(--sora);font-size:19px;font-weight:800}.sl{font-size:9.5px;color:var(--mut);margin-top:2px}
+
+/* LIST ROWS */
+.arow{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .15s}
+.arow:active{background:rgba(255,255,255,.02)}
+.ar-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ar-main{flex:1}.ar-title{font-size:12.5px;font-weight:500}.ar-sub{font-size:10.5px;color:var(--mut);margin-top:1px}
+.ar-r{color:var(--mut);font-size:14px}
+
+/* BADGES */
+.bd{font-size:10px;padding:2px 7px;border-radius:7px;font-weight:700}
+.bd-g{background:rgba(0,212,170,.15);color:var(--green)}.bd-y{background:rgba(255,170,0,.15);color:var(--yellow)}.bd-r{background:rgba(255,64,96,.15);color:var(--red)}.bd-b{background:rgba(0,153,255,.15);color:var(--acc2)}.bd-gold{background:rgba(245,158,11,.15);color:var(--gold)}
+
+/* SECTION HEAD */
+.sh{font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;padding:10px 13px 5px;border-top:1px solid var(--b)}
+
+/* FORM */
+.af{padding:0 13px 12px}
+.ainp{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:8px 11px;color:var(--txt);font-family:var(--font);font-size:12px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.ainp:focus{border-color:var(--acc)}
+.asel{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:8px 11px;color:var(--txt);font-family:var(--font);font-size:12px;outline:none;margin-bottom:8px}
+.ata{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:8px 11px;color:var(--txt);font-family:var(--font);font-size:12px;outline:none;margin-bottom:8px;resize:none;min-height:55px;line-height:1.6}
+.abtn{width:100%;padding:10px;border:none;border-radius:10px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;transition:all .2s}
+.ab-acc{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#000}
+.ab-gold{background:linear-gradient(135deg,var(--gold),var(--org));color:#000}
+.ab-red{background:rgba(255,64,96,.15);border:1px solid rgba(255,64,96,.3);color:var(--red)}
+.ab-out{background:none;border:1px solid var(--b2);color:var(--txt)}
+
+/* TOGGLE */
+.tog{width:38px;height:21px;border-radius:11px;cursor:pointer;position:relative;transition:background .3s;flex-shrink:0;border:none;padding:0}
+.tog.on{background:var(--acc)}.tog.off{background:var(--b2)}
+.tog::after{content:'';position:absolute;width:17px;height:17px;background:#fff;border-radius:50%;top:2px;transition:left .3s}
+.tog.on::after{left:19px}.tog.off::after{left:2px}
+
+/* PAY CARD */
+.pay-card{background:var(--card);border:1px solid var(--b2);border-radius:11px;padding:12px;margin-bottom:8px}
+.pc-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pc-ic{font-size:18px}.pc-name{font-size:12.5px;font-weight:600;flex:1}.pc-num{font-size:12px;color:var(--acc);font-weight:600}.pc-note{font-size:10.5px;color:var(--mut);margin-top:3px}
+.pc-acts{display:flex;gap:6px;margin-top:8px}
+.pc-btn{padding:4px 11px;border-radius:7px;cursor:pointer;font-size:10.5px;font-family:var(--font);border:1px solid;background:none}
+
+/* TOAST */
+.toast{position:fixed;top:58px;left:50%;transform:translateX(-50%) scale(.9);background:var(--card2);border:1px solid var(--acc);color:var(--acc);padding:9px 18px;border-radius:20px;font-size:12px;z-index:1000;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) scale(1)}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.on{opacity:1;pointer-events:all}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 16px 32px;z-index:51;transform:translateY(100%);transition:transform .3s ease;max-height:85vh;overflow-y:auto}
+.sheet.on{transform:translateY(0)}
+.sh-handle{width:36px;height:4px;background:var(--b2);border-radius:2px;margin:0 auto 16px}
+.sh-title{font-family:var(--sora);font-size:16px;font-weight:700;margin-bottom:14px}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(7,7,15,.85);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.loading-overlay.on{display:flex}
+.lo-spin{width:36px;height:36px;border:3px solid var(--b2);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lo-txt{font-size:12px;color:var(--mut)}
+
+/* KNOWLEDGE BOX */
+.kb-item{background:var(--bg2);border:1px solid var(--b);border-radius:10px;padding:11px;margin-bottom:8px}
+.kb-q{font-size:11px;color:var(--yellow);font-weight:600;margin-bottom:6px}
+.kb-a{font-size:11px;color:var(--mut);margin-top:4px}
+.kb-cnt{font-size:9.5px;color:var(--mut);margin-left:8px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="screen on" id="a-login">
+  <img src="logo.png" class="al-logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%2300d4aa%22/><text y=%22.9em%22 font-size=%2250%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22>A</text></svg>'">
+  <div class="al-title">BDAi Admin</div>
+  <div class="al-sub">Admin, Super Admin ও<br>Distributor Panel</div>
+  <button class="ag-btn" onclick="Native.googleLogin()">
+    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Google দিয়ে Login করুন
+  </button>
+  <div id="a-login-error" style="display:none" class="not-admin-msg">⛔ আপনার এই App ব্যবহারের অনুমতি নেই।</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="a-dash">
+  <div class="tb">
+    <img src="logo.png" class="tb-logo" onerror="this.style.display='none'">
+    <div class="tb-name">BDAi Dashboard</div>
+    <div class="tb-r"><span class="rtag" id="role-tag">Admin</span></div>
+  </div>
+  <div class="content">
+    <div class="stat-grid" id="dash-stats">
+      <div class="sbox"><div class="sn" style="color:var(--acc)" id="st-users">-</div><div class="sl">মোট User</div></div>
+      <div class="sbox"><div class="sn" style="color:var(--org)" id="st-prem">-</div><div class="sl">Premium</div></div>
+      <div class="sbox"><div class="sn" style="color:var(--acc2)" id="st-today">-</div><div class="sl">আজ Active</div></div>
+      <div class="sbox"><div class="sn" style="color:var(--yellow)" id="st-revenue">-</div><div class="sl">এই মাস</div></div>
+    </div>
+    <!-- Pending payments -->
+    <div class="sh">⏳ Payment Pending</div>
+    <div id="pending-list"><div style="padding:14px 13px;font-size:12px;color:var(--mut)">Loading...</div></div>
+    <div class="sh">⚡ Quick Actions</div>
+    <div class="arow" onclick="goA('a-users')"><div class="ar-ic" style="background:rgba(0,212,170,.1)">👥</div><div class="ar-main"><div class="ar-title">User Management</div><div class="ar-sub" id="qa-users">Users</div></div><div class="ar-r">›</div></div>
+    <div class="arow" onclick="goA('a-payment')"><div class="ar-ic" style="background:rgba(255,170,0,.1)">💳</div><div class="ar-main"><div class="ar-title">Payment Numbers</div><div class="ar-sub">bKash, Nagad, Bank</div></div><div class="ar-r">›</div></div>
+    <div class="arow" onclick="goA('a-knowledge')"><div class="ar-ic" style="background:rgba(124,58,237,.1)">🧠</div><div class="ar-main"><div class="ar-title">Knowledge Box</div><div class="ar-sub" id="kb-count">AI এর উত্তর শেখান</div></div><div class="ar-r">›</div></div>
+    <div class="arow" onclick="goA('a-notify')"><div class="ar-ic" style="background:rgba(0,153,255,.1)">📢</div><div class="ar-main"><div class="ar-title">Notification পাঠান</div><div class="ar-sub">সব user কে message</div></div><div class="ar-r">›</div></div>
+    <div class="arow sa-only" onclick="goA('a-brand')" style="display:none"><div class="ar-ic" style="background:rgba(245,158,11,.1)">🏷️</div><div class="ar-main"><div class="ar-title">Brand Control</div><div class="ar-sub">Logo, Name, Icons</div></div><div class="ar-r">›</div></div>
+    <div class="arow sa-only" onclick="goA('a-providers')" style="display:none"><div class="ar-ic" style="background:rgba(0,212,170,.1)">🔄</div><div class="ar-main"><div class="ar-title">AI Sources</div><div class="ar-sub">Provider on/off</div></div><div class="ar-r">›</div></div>
+    <div class="arow sa-only" onclick="goA('a-offer')" style="display:none"><div class="ar-ic" style="background:rgba(245,158,11,.1)">🎉</div><div class="ar-main"><div class="ar-title">Offer Management</div><div class="ar-sub">বিশেষ অফার দিন</div></div><div class="ar-r">›</div></div>
+    <div class="arow sa-only" onclick="goA('a-dist')" style="display:none"><div class="ar-ic" style="background:rgba(0,153,255,.1)">🤝</div><div class="ar-main"><div class="ar-title">Distributor Manage</div><div class="ar-sub">Limit set ও manage</div></div><div class="ar-r">›</div></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="bnav-btn on" onclick="goA('a-dash')"><div class="bi">📊</div><div class="bl">Dashboard</div></button>
+    <button class="bnav-btn" onclick="goA('a-users')"><div class="bi">👥</div><div class="bl">Users</div></button>
+    <button class="bnav-btn" onclick="goA('a-payment')"><div class="bi">💳</div><div class="bl">Payment</div></button>
+    <button class="bnav-btn" onclick="goA('a-brand')"><div class="bi">⚙️</div><div class="bl">Settings</div></button>
+  </div>
+</div>
+
+<!-- USERS -->
+<div class="screen" id="a-users">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">👥 User Management</div></div>
+  <div class="content">
+    <div style="padding:10px 13px"><input class="ainp" style="margin:0" id="user-search" placeholder="🔍 Email বা নাম দিয়ে খুঁজুন..." oninput="searchUsers(this.value)"></div>
+    <div id="user-list"><div style="padding:14px 13px;font-size:12px;color:var(--mut)">Loading...</div></div>
+    <div class="sh">⭐ Manual Premium Activate</div>
+    <div class="af" style="padding-top:10px">
+      <input class="ainp" id="prem-email" placeholder="User Gmail">
+      <select class="asel" id="prem-plan">
+        <option value="1month">৳২৯৯ — ১ মাস</option>
+        <option value="3month">৳৭৯৯ — ৩ মাস</option>
+        <option value="1year">৳২,৯৯৯ — ১ বছর</option>
+      </select>
+      <input class="ainp" id="prem-note" placeholder="Payment reference / Note">
+      <button class="abtn ab-acc" onclick="activatePremium()">⭐ Activate করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MANAGE -->
+<div class="screen" id="a-payment">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">💳 Payment Numbers</div><div class="tb-r"><span class="rtag rt-sa" id="pm-role-tag">SA</span></div></div>
+  <div class="content">
+    <div style="padding:10px 13px;background:rgba(0,212,170,.05);border-bottom:1px solid var(--b);font-size:11.5px;color:var(--acc)">💡 প্রতিটা নম্বর কোন Admin এর সাথে assign করুন। User ওই Admin এর নম্বরে payment করবে।</div>
+    <div class="sh">বর্তমান Payment Methods</div>
+    <div id="pay-methods-list" style="padding:10px 13px">Loading...</div>
+    <div class="sh sa-only" style="display:none">➕ নতুন Method যোগ করুন</div>
+    <div class="af sa-only" style="display:none" id="add-pm-form">
+      <select class="asel" id="pm-type">
+        <option value="bkash" data-ic="💗">💗 bKash</option>
+        <option value="nagad" data-ic="🟠">🟠 Nagad</option>
+        <option value="rocket" data-ic="💜">💜 Rocket</option>
+        <option value="dbbl" data-ic="💙">💙 DBBL Mobile</option>
+        <option value="bank" data-ic="🏦">🏦 Bank Transfer</option>
+        <option value="other" data-ic="📱">📱 অন্যান্য</option>
+      </select>
+      <input class="ainp" id="pm-number" placeholder="নম্বর / Account Number">
+      <input class="ainp" id="pm-account-name" placeholder="Account holder name">
+      <select class="asel" id="pm-assign-admin">
+        <option value="">Assign to Admin (optional)</option>
+      </select>
+      <input class="ainp" id="pm-note" placeholder="Note (Personal / Merchant / Branch info)">
+      <button class="abtn ab-acc" onclick="addPayMethod()">➕ যোগ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- KNOWLEDGE BOX -->
+<div class="screen" id="a-knowledge">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">🧠 Knowledge Box</div></div>
+  <div class="content">
+    <div style="padding:10px 13px;background:rgba(0,212,170,.05);border-bottom:1px solid var(--b);font-size:11px;color:var(--mut)">AI যে প্রশ্নের উত্তর জানে না সেগুলো এখানে আসে। উত্তর দিলে AI শিখে নেবে।</div>
+    <div class="sh" style="color:var(--yellow)">❓ Pending</div>
+    <div id="kb-pending" style="padding:10px 13px">Loading...</div>
+    <div class="sh" style="color:var(--acc)">✅ Answered</div>
+    <div id="kb-answered" style="padding:10px 13px">Loading...</div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="screen" id="a-notify">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">📢 Notification</div></div>
+  <div class="content">
+    <div class="af" style="padding-top:14px">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Title</label>
+      <input class="ainp" id="notif-title" placeholder="Notification title">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Message</label>
+      <textarea class="ata" id="notif-body" placeholder="Message লিখুন..." style="min-height:100px"></textarea>
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">পাঠাবেন কাকে</label>
+      <select class="asel" id="notif-target">
+        <option value="all">সব User (Free + Premium)</option>
+        <option value="premium">শুধু Premium</option>
+        <option value="free">শুধু Free</option>
+      </select>
+      <button class="abtn ab-acc" onclick="sendNotification()">📢 Notification পাঠান</button>
+    </div>
+    <div class="sh">📜 Notification History</div>
+    <div id="notif-history" style="padding:10px 13px">Loading...</div>
+  </div>
+</div>
+
+<!-- BRAND CONTROL (SA Only) -->
+<div class="screen sa-page" id="a-brand">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">🏷️ Brand Control</div><div class="tb-r"><span class="rtag rt-sa">👑 SA Only</span></div></div>
+  <div class="content">
+    <div style="padding:10px 13px;background:rgba(245,158,11,.05);border-bottom:1px solid var(--b);font-size:10.5px;color:var(--gold)">⚠️ এই সেকশন শুধু Super Admin দেখতে পাবেন।</div>
+    <div class="af" style="padding-top:12px">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">App নাম</label>
+      <input class="ainp" id="br-appname" placeholder="BDAi By Azad">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Welcome Title</label>
+      <input class="ainp" id="br-wtitle" placeholder="Welcome title">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Welcome Message</label>
+      <textarea class="ata" id="br-wmsg" placeholder="Home screen এ দেখাবে..." style="min-height:80px"></textarea>
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Accent Color</label>
+      <input class="ainp" id="br-color" placeholder="#c96e3f">
+    </div>
+    <div class="sh">🔣 Feature Icons (Emoji)</div>
+    <div class="af" style="padding-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div><label style="font-size:10px;color:var(--mut);display:block;margin-bottom:3px">Chat</label><input class="ainp" id="ic-chat" value="💬" style="margin-bottom:0;text-align:center;font-size:20px"></div>
+      <div><label style="font-size:10px;color:var(--mut);display:block;margin-bottom:3px">Image</label><input class="ainp" id="ic-image" value="🎨" style="margin-bottom:0;text-align:center;font-size:20px"></div>
+      <div><label style="font-size:10px;color:var(--mut);display:block;margin-bottom:3px">Code</label><input class="ainp" id="ic-code" value="💻" style="margin-bottom:0;text-align:center;font-size:20px"></div>
+      <div><label style="font-size:10px;color:var(--mut);display:block;margin-bottom:3px">Video</label><input class="ainp" id="ic-video" value="🎬" style="margin-bottom:0;text-align:center;font-size:20px"></div>
+      <div><label style="font-size:10px;color:var(--mut);display:block;margin-bottom:3px">Vision</label><input class="ainp" id="ic-vision" value="👁️" style="margin-bottom:0;text-align:center;font-size:20px"></div>
+      <div><label style="font-size:10px;color:var(--mut);display:block;margin-bottom:3px">Voice</label><input class="ainp" id="ic-voice" value="🎤" style="margin-bottom:0;text-align:center;font-size:20px"></div>
+    </div>
+    <div class="af" style="padding-top:12px">
+      <button class="abtn ab-gold" onclick="saveBrand()">💾 Brand Update করুন</button>
+    </div>
+    <div class="sh">⚙️ App Settings</div>
+    <div class="arow"><div class="ar-main"><div class="ar-title" style="font-size:12px">Registration চালু</div></div><button class="tog on" id="tog-reg" onclick="toggleSetting('registration',this)"></button></div>
+    <div class="arow"><div class="ar-main"><div class="ar-title" style="font-size:12px">Maintenance Mode</div></div><button class="tog off" id="tog-maint" onclick="toggleSetting('maintenance',this)"></button></div>
+    <div class="arow"><div class="ar-main"><div class="ar-title" style="font-size:12px">Free Chat Limit/দিন</div></div><input type="number" id="set-chat-limit" value="50" style="width:60px;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:4px 8px;color:var(--txt);text-align:center;font-size:12px" onchange="saveLimit('chat',this.value)"></div>
+    <div class="arow"><div class="ar-main"><div class="ar-title" style="font-size:12px">Free Image Limit/দিন</div></div><input type="number" id="set-img-limit" value="10" style="width:60px;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:4px 8px;color:var(--txt);text-align:center;font-size:12px" onchange="saveLimit('image',this.value)"></div>
+    <div class="sh">💰 Pricing</div>
+    <div class="af" style="padding-top:10px">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">১ মাসের দাম (৳)</label>
+      <input class="ainp" id="price-1m" type="number" placeholder="299">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">৩ মাসের দাম (৳)</label>
+      <input class="ainp" id="price-3m" type="number" placeholder="799">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">১ বছরের দাম (৳)</label>
+      <input class="ainp" id="price-1y" type="number" placeholder="2999">
+      <button class="abtn ab-acc" onclick="savePrices()">💾 Price Update</button>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- AI PROVIDERS (SA Only) -->
+<div class="screen sa-page" id="a-providers">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">🔄 AI Sources</div></div>
+  <div class="content">
+    <div style="padding:10px 13px;background:rgba(0,212,170,.05);border-bottom:1px solid var(--b)">
+      <div style="font-size:11.5px;color:var(--acc);font-weight:600">Auto Health-Check প্রতি ১০ মিনিট</div>
+      <div style="font-size:10.5px;color:var(--mut);margin-top:2px">Dead source auto-skip হয়। Parallel race — fastest wins।</div>
+    </div>
+    <div id="provider-list"><div style="padding:14px;font-size:12px;color:var(--mut)">Loading...</div></div>
+    <div class="sh">➕ নতুন Source</div>
+    <div class="af" style="padding-top:10px">
+      <input class="ainp" id="prov-name" placeholder="Provider নাম">
+      <input class="ainp" id="prov-url" placeholder="Endpoint URL">
+      <select class="asel" id="prov-type"><option value="chat">Chat</option><option value="image">Image</option><option value="video">Video</option><option value="voice">Voice</option></select>
+      <button class="abtn ab-acc" onclick="addProvider()">➕ যোগ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- OFFER (SA Only) -->
+<div class="screen sa-page" id="a-offer">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">🎉 Offer Management</div></div>
+  <div class="content">
+    <div class="af" style="padding-top:14px">
+      <div class="arow" style="border-radius:10px;margin-bottom:10px"><div class="ar-main"><div class="ar-title">Offer চালু আছে?</div></div><button class="tog off" id="offer-tog" onclick="this.classList.toggle('on');this.classList.toggle('off');saveOfferToggle(this.classList.contains('on'))"></button></div>
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Offer Title</label>
+      <input class="ainp" id="offer-title" placeholder="যেমন: ঈদ স্পেশাল অফার!">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Offer Description</label>
+      <input class="ainp" id="offer-desc" placeholder="যেমন: ৫০% ছাড়ে Premium নিন">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Discount % (optional)</label>
+      <input class="ainp" id="offer-disc" type="number" placeholder="50">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Offer শেষ হবে (date)</label>
+      <input class="ainp" id="offer-end" type="date">
+      <button class="abtn ab-gold" onclick="saveOffer()">💾 Offer Save করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISTRIBUTOR (SA Only) -->
+<div class="screen sa-page" id="a-dist">
+  <div class="tb"><button class="tb-back" onclick="goA('a-dash')">←</button><div class="tb-name">🤝 Distributor Manage</div></div>
+  <div class="content">
+    <div id="dist-list"><div style="padding:14px;font-size:12px;color:var(--mut)">Loading...</div></div>
+    <!-- Limit requests -->
+    <div class="sh" style="color:var(--yellow)">⬆️ Limit বাড়ানোর Request</div>
+    <div id="limit-requests"><div style="padding:14px 13px;font-size:12px;color:var(--mut)">Loading...</div></div>
+    <div class="sh">➕ নতুন Admin / Distributor তৈরি</div>
+    <div class="af" style="padding-top:10px">
+      <input class="ainp" id="new-admin-email" placeholder="Gmail address">
+      <select class="asel" id="new-admin-role">
+        <option value="admin">🛡️ Admin</option>
+        <option value="distributor">🤝 Distributor</option>
+      </select>
+      <input class="ainp" id="new-admin-area" placeholder="এলাকা / দায়িত্ব">
+      <label style="font-size:10.5px;color:var(--mut);display:block;margin-bottom:4px">Distributor Activation Limit</label>
+      <input class="ainp" id="new-dist-limit" type="number" placeholder="যেমন: 50 (মাসে ৫০টি activate করতে পারবে)">
+      <button class="abtn ab-acc" onclick="createAdmin()">➕ তৈরি করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST + OVERLAY + SHEET + LOADING -->
+<div class="toast" id="toast"></div>
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div class="sh-handle"></div><div id="sh-content"></div></div>
+<div class="loading-overlay" id="loading"><div class="lo-spin"></div><div class="lo-txt" id="lo-txt">Loading...</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase_config.js"></script>
+<script>
+firebase.initializeApp(FB);
+const auth = firebase.auth();
+const db = firebase.firestore();
+db.settings({persistenceEnabled:true});
+
+let adminUser=null, adminRole='';
+
+// Navigation
+function goA(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  const s=document.getElementById(id);if(s){s.classList.add('on');s.classList.add('fade');setTimeout(()=>s.classList.remove('fade'),300);}
+}
+function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);}
+function showLoading(txt){document.getElementById('lo-txt').textContent=txt||'';document.getElementById('loading').classList.add('on');}
+function hideLoading(){document.getElementById('loading').classList.remove('on');}
+function openSheet(html){document.getElementById('sh-content').innerHTML=html;document.getElementById('sheet').classList.add('on');document.getElementById('overlay').classList.add('on');}
+function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('overlay').classList.remove('on');}
+
+// Auth callbacks
+window._nativeAuth = (j)=>{
+  const d=typeof j==='string'?JSON.parse(j):j;
+  adminUser=d;adminRole=d.role;
+  applyRoleUI();
+  loadDashboard();
+  loadPayMethods();
+  loadKnowledge();
+  loadBrandSettings();
+  loadDistributors();
+  loadNotifHistory();
+  loadProviders();
+  goA('a-dash');
+};
+window._notAdmin = ()=>{
+  document.getElementById('a-login-error').style.display='block';
+  setTimeout(()=>Native.logout(),2000);
+};
+window._authError = (e)=>{ toast('❌ Login failed: '+e); };
+window._onBack = ()=>{ if(document.querySelector('.screen.on')?.id!=='a-dash') goA('a-dash'); };
+
+function applyRoleUI(){
+  const isSA = adminRole==='super_admin';
+  const roleEl = document.getElementById('role-tag');
+  if(roleEl){roleEl.textContent=isSA?'👑 SA':adminRole==='admin'?'🛡️ Admin':'🤝 Dist';roleEl.className='rtag '+(isSA?'rt-sa':adminRole==='admin'?'rt-a':'rt-d');}
+  document.querySelectorAll('.sa-only').forEach(el=>el.style.display=isSA?'':'none');
+}
+
+// ══ DASHBOARD ══
+async function loadDashboard(){
+  try{
+    // Stats
+    const snap=await db.collection('users').get();
+    let total=0,prem=0,todayActive=0;
+    const today=new Date().toDateString();
+    snap.forEach(doc=>{
+      total++;
+      if(doc.data().plan==='premium')prem++;
+      if(doc.data().updatedAt?.toDate?.()?.toDateString?.()===today)todayActive++;
+    });
+    document.getElementById('st-users').textContent=total.toLocaleString('bn');
+    document.getElementById('st-prem').textContent=prem.toLocaleString('bn');
+    document.getElementById('st-today').textContent=todayActive.toLocaleString('bn');
+    document.getElementById('qa-users').textContent=`${total} জন registered`;
+
+    // Revenue (this month)
+    const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1);
+    const paySnap=await db.collection('payment_requests').where('status','==','verified').where('createdAt','>=',firebase.firestore.Timestamp.fromDate(start)).get();
+    let rev=0;
+    paySnap.forEach(doc=>{const a=parseInt((doc.data().amount||'').replace(/[^\d]/g,''))||0;rev+=a;});
+    document.getElementById('st-revenue').textContent='৳'+(rev>1000?Math.round(rev/1000)+'K':rev);
+
+    // Pending payments
+    loadPendingPayments();
+
+    // KB count
+    const kbSnap=await db.collection('knowledge').where('status','==','pending').get();
+    if(kbSnap.size>0)document.getElementById('kb-count').textContent=`${kbSnap.size}টি নতুন প্রশ্ন!`;
+  }catch(e){}
+}
+
+async function loadPendingPayments(){
+  try{
+    let q=db.collection('payment_requests').where('status','==','pending').orderBy('createdAt','desc').limit(10);
+    // If admin (not SA), only show assigned to them
+    if(adminRole==='admin'){q=db.collection('payment_requests').where('status','==','pending').where('assignedAdmin',adminUser?.uid||'NONE');}
+    const snap=await q.get();
+    const list=document.getElementById('pending-list');
+    if(snap.empty){list.innerHTML='<div style="padding:14px 13px;font-size:12px;color:var(--mut)">কোনো pending payment নেই।</div>';return;}
+    list.innerHTML=snap.docs.map(doc=>{
+      const d=doc.data();
+      return `<div class="arow"><div class="ar-ic" style="background:rgba(255,170,0,.1)">💳</div><div class="ar-main"><div class="ar-title">${d.name||d.email||'User'} — ${d.payMethod||''}</div><div class="ar-sub">TXN: ${d.trxId||''} • ${d.amount||''} • ${d.plan||''}</div></div><button onclick="verifyPayment('${doc.id}','${d.uid}','${d.plan}')" style="padding:4px 9px;background:rgba(0,212,170,.15);border:1px solid rgba(0,212,170,.3);border-radius:7px;cursor:pointer;font-size:10.5px;color:var(--acc);font-family:var(--font)">Verify</button></div>`;
+    }).join('');
+  }catch(e){}
+}
+
+async function verifyPayment(payId,uid,planId){
+  showLoading('Verifying...');
+  try{
+    const planMonths={'1month':1,'3month':3,'1year':12};
+    const months=planMonths[planId]||1;
+    const expiry=new Date();expiry.setMonth(expiry.getMonth()+months);
+    await db.collection('payment_requests').doc(payId).update({status:'verified',verifiedAt:firebase.firestore.Timestamp.now(),verifiedBy:adminUser?.uid});
+    await db.collection('users').doc(uid).update({plan:'premium',planExpiry:firebase.firestore.Timestamp.fromDate(expiry),updatedAt:firebase.firestore.Timestamp.now()});
+    hideLoading();toast('✅ Premium activated!');loadDashboard();
+  }catch(e){hideLoading();toast('❌ Error: '+e.message);}
+}
+
+// ══ USERS ══
+let allUsers=[];
+async function loadUserList(){
+  try{
+    const snap=await db.collection('users').orderBy('createdAt','desc').limit(50).get();
+    allUsers=snap.docs.map(doc=>({id:doc.id,...doc.data()}));renderUserList(allUsers);
+  }catch(e){}
+}
+function renderUserList(users){
+  const list=document.getElementById('user-list');
+  if(!users.length){list.innerHTML='<div style="padding:14px 13px;font-size:12px;color:var(--mut)">কোনো user পাওয়া যায়নি।</div>';return;}
+  list.innerHTML=users.slice(0,30).map(u=>`
+    <div class="arow">
+      <div class="ar-ic" style="background:rgba(0,212,170,.1)">👤</div>
+      <div class="ar-main"><div class="ar-title">${u.name||'User'}</div><div class="ar-sub">${u.email||''}</div></div>
+      <span class="bd ${u.plan==='premium'?'bd-g':'bd-y'}">${u.plan==='premium'?'Premium':'Free'}</span>
+    </div>`).join('');
+}
+function searchUsers(q){if(!q){renderUserList(allUsers);return;}const f=allUsers.filter(u=>(u.name||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase()));renderUserList(f);}
+document.getElementById('a-users').addEventListener('transitionend',()=>{if(document.getElementById('a-users').classList.contains('on'))loadUserList();});
+
+async function activatePremium(){
+  const email=document.getElementById('prem-email').value.trim();
+  const plan=document.getElementById('prem-plan').value;
+  const note=document.getElementById('prem-note').value;
+  if(!email){toast('⚠️ Email দিন');return;}
+  showLoading('Activating...');
+  try{
+    const snap=await db.collection('users').where('email','==',email).limit(1).get();
+    if(snap.empty){hideLoading();toast('❌ User পাওয়া যায়নি');return;}
+    const uid=snap.docs[0].id;
+    const months={'1month':1,'3month':3,'1year':12}[plan]||1;
+    const expiry=new Date();expiry.setMonth(expiry.getMonth()+months);
+    await db.collection('users').doc(uid).update({plan:'premium',planExpiry:firebase.firestore.Timestamp.fromDate(expiry),updatedAt:firebase.firestore.Timestamp.now()});
+    await db.collection('payment_requests').add({uid,email,plan,status:'manual',note,activatedBy:adminUser?.uid,createdAt:firebase.firestore.Timestamp.now()});
+    hideLoading();toast('✅ Premium activated!');
+    document.getElementById('prem-email').value='';document.getElementById('prem-note').value='';
+  }catch(e){hideLoading();toast('❌ '+e.message);}
+}
+
+// ══ PAYMENT METHODS ══
+async function loadPayMethods(){
+  try{
+    const doc=await db.collection('config').doc('payment').get();
+    const methods=doc.exists?doc.data().methods||[];
+    const isSA=adminRole==='super_admin';
+    const list=document.getElementById('pay-methods-list');
+    const tagEl=document.getElementById('pm-role-tag');
+    if(tagEl)tagEl.textContent=isSA?'👑 SA Only':'Admin';
+    if(isSA){document.getElementById('add-pm-form').style.display='';document.querySelector('.sa-only.sh')?.style?.setProperty('display','');}
+    // Load admin list for assignment
+    const adminSnap=await db.collection('users').where('role','in',['admin','distributor']).get();
+    const adminSel=document.getElementById('pm-assign-admin');
+    if(adminSel){adminSel.innerHTML='<option value="">No specific assignment</option>'+adminSnap.docs.map(d=>`<option value="${d.id}">${d.data().name||d.data().email}</option>`).join('');}
+    if(!methods.length){list.innerHTML='<div style="font-size:12px;color:var(--mut)">কোনো payment method নেই।</div>';return;}
+    list.innerHTML=methods.map((m,i)=>`
+      <div class="pay-card">
+        <div class="pc-head"><div class="pc-ic">${m.icon||'💳'}</div><div class="pc-name">${m.name}</div><span class="bd ${m.active!==false?'bd-g':'bd-r'}">${m.active!==false?'Active':'Off'}</span></div>
+        <div class="pc-num">${m.number}</div>
+        <div class="pc-note">${m.note||''} ${m.assignedAdmin?'• Admin assigned':''}</div>
+        ${isSA?`<div class="pc-acts">
+          <button class="pc-btn" style="border-color:rgba(0,212,170,.3);color:var(--acc)" onclick="editPayMethod(${i})">✏️ Edit</button>
+          <button class="pc-btn" style="border-color:var(--b2);color:var(--mut)" onclick="togglePayMethod(${i},${m.active!==false})">${m.active!==false?'⏸ Disable':'▶️ Enable'}</button>
+        </div>`:''}
+      </div>`).join('');
+  }catch(e){}
+}
+
+async function addPayMethod(){
+  const sel=document.getElementById('pm-type');
+  const icons={'bkash':'💗','nagad':'🟠','rocket':'💜','dbbl':'💙','bank':'🏦','other':'📱'};
+  const method={name:sel.options[sel.selectedIndex].text.split(' ').slice(1).join(' '),icon:icons[sel.value]||'💳',number:document.getElementById('pm-number').value.trim(),accountName:document.getElementById('pm-account-name').value.trim(),assignedAdmin:document.getElementById('pm-assign-admin').value,note:document.getElementById('pm-note').value.trim(),active:true};
+  if(!method.number){toast('⚠️ নম্বর দিন');return;}
+  showLoading('Saving...');
+  try{
+    const doc=await db.collection('config').doc('payment').get();
+    const methods=doc.exists?doc.data().methods||[];
+    methods.push(method);
+    await db.collection('config').doc('payment').set({methods},{merge:true});
+    hideLoading();toast('✅ Payment method যোগ হয়েছে!');
+    document.getElementById('pm-number').value='';document.getElementById('pm-account-name').value='';document.getElementById('pm-note').value='';
+    loadPayMethods();
+  }catch(e){hideLoading();toast('❌ '+e.message);}
+}
+
+async function togglePayMethod(idx,currentActive){
+  try{
+    const doc=await db.collection('config').doc('payment').get();
+    const methods=doc.data().methods||[];
+    methods[idx].active=!currentActive;
+    await db.collection('config').doc('payment').set({methods});
+    toast('✅ Updated!');loadPayMethods();
+  }catch(e){toast('❌ '+e.message);}
+}
+function editPayMethod(idx){toast('✏️ Edit coming soon');}
+
+// ══ KNOWLEDGE BOX ══
+async function loadKnowledge(){
+  try{
+    const pSnap=await db.collection('knowledge').where('status','==','pending').orderBy('createdAt','desc').get();
+    const aSnap=await db.collection('knowledge').where('status','==','answered').orderBy('createdAt','desc').limit(20).get();
+    document.getElementById('kb-count').textContent=pSnap.size>0?`${pSnap.size}টি নতুন প্রশ্ন!`:'Knowledge Box';
+    const pList=document.getElementById('kb-pending');
+    if(pSnap.empty){pList.innerHTML='<div style="font-size:12px;color:var(--mut)">কোনো pending প্রশ্ন নেই।</div>';}
+    else{pList.innerHTML=pSnap.docs.map(doc=>`
+      <div class="kb-item">
+        <div class="kb-q">❓ ${doc.data().question}<span class="kb-cnt">• ${doc.data().count||1} বার</span></div>
+        <textarea class="ata" id="kb-ans-${doc.id}" placeholder="উত্তর লিখুন..."></textarea>
+        <button onclick="saveKBAnswer('${doc.id}')" style="padding:5px 13px;background:rgba(0,212,170,.15);border:1px solid rgba(0,212,170,.3);border-radius:7px;cursor:pointer;font-size:11px;color:var(--acc);font-family:var(--font)">💾 Save</button>
+      </div>`).join('');}
+    const aList=document.getElementById('kb-answered');
+    if(aSnap.empty){aList.innerHTML='<div style="font-size:12px;color:var(--mut)">কোনো answered প্রশ্ন নেই।</div>';}
+    else{aList.innerHTML=aSnap.docs.map(doc=>`<div class="kb-item"><div class="kb-q">✅ ${doc.data().question}</div><div class="kb-a">${doc.data().answer}</div></div>`).join('');}
+  }catch(e){}
+}
+async function saveKBAnswer(docId){
+  const ans=document.getElementById('kb-ans-'+docId)?.value.trim();
+  if(!ans){toast('⚠️ উত্তর লিখুন');return;}
+  try{await db.collection('knowledge').doc(docId).update({answer:ans,status:'answered',answeredAt:firebase.firestore.Timestamp.now(),answeredBy:adminUser?.uid});toast('✅ Save হয়েছে!');loadKnowledge();}catch(e){toast('❌ '+e.message);}
+}
+
+// ══ NOTIFICATION ══
+async function sendNotification(){
+  const title=document.getElementById('notif-title').value.trim();
+  const body=document.getElementById('notif-body').value.trim();
+  const target=document.getElementById('notif-target').value;
+  if(!title||!body){toast('⚠️ Title ও message দিন');return;}
+  showLoading('Sending...');
+  try{
+    await db.collection('notifications').add({title,body,target,sentBy:adminUser?.uid,sentAt:firebase.firestore.Timestamp.now(),status:'sent'});
+    hideLoading();toast('✅ Notification sent!');
+    document.getElementById('notif-title').value='';document.getElementById('notif-body').value='';
+    loadNotifHistory();
+  }catch(e){hideLoading();toast('❌ '+e.message);}
+}
+async function loadNotifHistory(){
+  try{
+    const snap=await db.collection('notifications').orderBy('sentAt','desc').limit(10).get();
+    const list=document.getElementById('notif-history');
+    if(snap.empty){list.innerHTML='<div style="font-size:12px;color:var(--mut)">কোনো history নেই।</div>';return;}
+    list.innerHTML=snap.docs.map(doc=>`<div class="arow"><div class="ar-main"><div class="ar-title" style="font-size:12px">${doc.data().title}</div><div class="ar-sub">${doc.data().body?.slice(0,50)}... • ${doc.data().target}</div></div></div>`).join('');
+  }catch(e){}
+}
+
+// ══ BRAND ══
+async function loadBrandSettings(){
+  if(adminRole!=='super_admin')return;
+  try{
+    const doc=await db.collection('config').doc('brand').get();
+    if(!doc.exists)return;
+    const d=doc.data();
+    const fields={br_appname:'appName',br_wtitle:'welcomeTitle',br_wmsg:'welcomeMsg',br_color:'accentColor','ic-chat':'icons.chat','ic-image':'icons.image','ic-code':'icons.code','ic-video':'icons.video','ic-vision':'icons.vision','ic-voice':'icons.voice'};
+    Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(!el)return;const val=key.includes('.')?key.split('.').reduce((o,k)=>o?.[k],d):d[key];if(val)el.value=val;});
+    const pd=await db.collection('config').doc('prices').get();
+    if(pd.exists){const p=pd.data();if(p.m1)document.getElementById('price-1m').value=p.m1;if(p.m3)document.getElementById('price-3m').value=p.m3;if(p.y1)document.getElementById('price-1y').value=p.y1;}
+    const sd=await db.collection('config').doc('settings').get();
+    if(sd.exists){const s=sd.data();if(s.chatLimit)document.getElementById('set-chat-limit').value=s.chatLimit;if(s.imageLimit)document.getElementById('set-img-limit').value=s.imageLimit;}
+    const od=await db.collection('config').doc('offer').get();
+    if(od.exists){const o=od.data();if(o.active)document.getElementById('offer-tog').classList.replace('off','on');if(o.title)document.getElementById('offer-title').value=o.title;if(o.desc)document.getElementById('offer-desc').value=o.desc;}
+  }catch(e){}
+}
+async function saveBrand(){
+  showLoading('Saving...');
+  try{
+    const data={appName:document.getElementById('br-appname').value,welcomeTitle:document.getElementById('br-wtitle').value,welcomeMsg:document.getElementById('br-wmsg').value,accentColor:document.getElementById('br-color').value,icons:{chat:document.getElementById('ic-chat').value,image:document.getElementById('ic-image').value,code:document.getElementById('ic-code').value,video:document.getElementById('ic-video').value,vision:document.getElementById('ic-vision').value,voice:document.getElementById('ic-voice').value},updatedAt:firebase.firestore.Timestamp.now()};
+    await db.collection('config').doc('brand').set(data,{merge:true});
+    hideLoading();toast('✅ Brand updated!');
+  }catch(e){hideLoading();toast('❌ '+e.message);}
+}
+async function savePrices(){
+  try{const m1=document.getElementById('price-1m').value;const m3=document.getElementById('price-3m').value;const y1=document.getElementById('price-1y').value;await db.collection('config').doc('prices').set({m1:parseInt(m1)||299,m3:parseInt(m3)||799,y1:parseInt(y1)||2999});toast('✅ Prices updated!');}catch(e){toast('❌ '+e.message);}
+}
+async function saveLimit(type,val){
+  try{await db.collection('config').doc('settings').set({[type+'Limit']:parseInt(val)||50},{merge:true});toast('✅ Limit updated!');}catch(e){}
+}
+async function toggleSetting(key,btn){
+  btn.classList.toggle('on');btn.classList.toggle('off');
+  const val=btn.classList.contains('on');
+  try{await db.collection('config').doc('settings').set({[key]:val},{merge:true});toast('✅ Saved!');}catch(e){}
+}
+
+// ══ OFFER ══
+async function saveOfferToggle(active){
+  try{await db.collection('config').doc('offer').set({active},{merge:true});}catch(e){}
+}
+async function saveOffer(){
+  showLoading('Saving...');
+  try{
+    const data={title:document.getElementById('offer-title').value,desc:document.getElementById('offer-desc').value,discount:parseInt(document.getElementById('offer-disc').value)||0,endDate:document.getElementById('offer-end').value,active:document.getElementById('offer-tog').classList.contains('on'),updatedAt:firebase.firestore.Timestamp.now()};
+    await db.collection('config').doc('offer').set(data,{merge:true});
+    hideLoading();toast('✅ Offer saved!');
+  }catch(e){hideLoading();toast('❌ '+e.message);}
+}
+
+// ══ DISTRIBUTORS ══
+async function loadDistributors(){
+  if(adminRole!=='super_admin')return;
+  try{
+    const snap=await db.collection('users').where('role','==','distributor').get();
+    const list=document.getElementById('dist-list');
+    if(snap.empty){list.innerHTML='<div style="padding:14px;font-size:12px;color:var(--mut)">কোনো Distributor নেই।</div>';return;}
+    list.innerHTML=snap.docs.map(doc=>{
+      const d=doc.data();
+      return `<div class="arow"><div class="ar-ic" style="background:rgba(0,153,255,.1)">🤝</div><div class="ar-main"><div class="ar-title">${d.name||d.email}</div><div class="ar-sub">Limit: ${d.activationLimit||50} • Used: ${d.activationUsed||0} • ${d.area||''}</div></div><button onclick="editDistLimit('${doc.id}',${d.activationLimit||50})" style="padding:4px 9px;background:rgba(0,153,255,.15);border:1px solid rgba(0,153,255,.3);border-radius:7px;cursor:pointer;font-size:10px;color:var(--acc2);font-family:var(--font)">Edit Limit</button></div>`;
+    }).join('');
+    // Limit requests
+    const reqSnap=await db.collection('limit_requests').where('status','==','pending').get();
+    const reqList=document.getElementById('limit-requests');
+    if(reqSnap.empty){reqList.innerHTML='<div style="padding:0 0 10px;font-size:12px;color:var(--mut)">কোনো request নেই।</div>';return;}
+    reqList.innerHTML=reqSnap.docs.map(doc=>{
+      const d=doc.data();
+      return `<div class="arow"><div class="ar-main"><div class="ar-title">${d.distName||d.distEmail} — Limit বাড়াতে চান</div><div class="ar-sub">Current: ${d.current} → Requested: ${d.requested}</div></div><button onclick="approveLimitReq('${doc.id}','${d.distUid}',${d.requested})" style="padding:4px 9px;background:rgba(0,212,170,.15);border:1px solid rgba(0,212,170,.3);border-radius:7px;cursor:pointer;font-size:10px;color:var(--acc);font-family:var(--font)">Approve</button></div>`;
+    }).join('');
+  }catch(e){}
+}
+function editDistLimit(uid,current){
+  openSheet(`<div class="sh-title">Distributor Limit Edit</div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:6px">নতুন limit:</label><input class="ainp" id="new-limit-val" type="number" value="${current}" style="margin-bottom:12px"><button class="abtn ab-acc" onclick="saveDistLimit('${uid}',document.getElementById('new-limit-val').value)">💾 Save</button><button class="abtn ab-out" onclick="closeSheet()">বাতিল</button>`);
+}
+async function saveDistLimit(uid,limit){
+  try{await db.collection('users').doc(uid).update({activationLimit:parseInt(limit)||50});closeSheet();toast('✅ Limit updated!');loadDistributors();}catch(e){toast('❌ '+e.message);}
+}
+async function approveLimitReq(reqId,uid,newLimit){
+  try{await db.collection('users').doc(uid).update({activationLimit:newLimit});await db.collection('limit_requests').doc(reqId).update({status:'approved',approvedAt:firebase.firestore.Timestamp.now()});toast('✅ Approved!');loadDistributors();}catch(e){toast('❌ '+e.message);}
+}
+
+async function createAdmin(){
+  const email=document.getElementById('new-admin-email').value.trim();
+  const role=document.getElementById('new-admin-role').value;
+  const area=document.getElementById('new-admin-area').value.trim();
+  const limit=parseInt(document.getElementById('new-dist-limit').value)||50;
+  if(!email){toast('⚠️ Email দিন');return;}
+  showLoading('Creating...');
+  try{
+    const snap=await db.collection('users').where('email','==',email).limit(1).get();
+    if(snap.empty){hideLoading();toast('❌ এই email এ কোনো user নেই। আগে app এ login করতে হবে।');return;}
+    const uid=snap.docs[0].id;
+    const upd={role,area,updatedAt:firebase.firestore.Timestamp.now()};
+    if(role==='distributor'){upd.activationLimit=limit;upd.activationUsed=0;}
+    await db.collection('users').doc(uid).update(upd);
+    hideLoading();toast(`✅ ${role==='admin'?'Admin':'Distributor'} তৈরি হয়েছে!`);
+    document.getElementById('new-admin-email').value='';loadDistributors();
+  }catch(e){hideLoading();toast('❌ '+e.message);}
+}
+
+// ══ PROVIDERS ══
+async function loadProviders(){
+  if(adminRole!=='super_admin')return;
+  try{
+    const doc=await db.collection('config').doc('providers').get();
+    const providers=doc.exists?doc.data().list||[];
+    const list=document.getElementById('provider-list');
+    if(!providers.length){list.innerHTML='<div style="padding:14px;font-size:12px;color:var(--mut)">Default providers চলছে।</div>';return;}
+    list.innerHTML=providers.map((p,i)=>`<div class="arow"><div style="width:7px;height:7px;border-radius:50%;background:${p.active!==false?'var(--green)':'var(--red)'};flex-shrink:0"></div><div class="ar-main"><div class="ar-title" style="font-size:12px">${p.name}</div><div class="ar-sub">${p.type}</div></div><button class="tog ${p.active!==false?'on':'off'}" onclick="toggleProvider(${i},${p.active!==false})"></button></div>`).join('');
+  }catch(e){}
+}
+async function toggleProvider(idx,current){
+  try{const doc=await db.collection('config').doc('providers').get();const list=doc.data().list||[];list[idx].active=!current;await db.collection('config').doc('providers').set({list});toast('✅ Updated!');loadProviders();}catch(e){toast('❌ '+e.message);}
+}
+async function addProvider(){
+  const name=document.getElementById('prov-name').value.trim();const url=document.getElementById('prov-url').value.trim();const type=document.getElementById('prov-type').value;
+  if(!name||!url){toast('⚠️ নাম ও URL দিন');return;}
+  try{const doc=await db.collection('config').doc('providers').get();const list=doc.exists?doc.data().list||[];list.push({name,url,type,active:true});await db.collection('config').doc('providers').set({list});toast('✅ Provider যোগ হয়েছে!');document.getElementById('prov-name').value='';document.getElementById('prov-url').value='';loadProviders();}catch(e){toast('❌ '+e.message);}
+}
+
+window.onload = () => { const s=localStorage.getItem('bdai_admin'); if(s){try{window._nativeAuth(JSON.parse(s));}catch{goA('a-login');}}else goA('a-login'); };
+const _o=window._nativeAuth;
+window._nativeAuth=(j)=>{const d=typeof j==='string'?JSON.parse(j):j;localStorage.setItem('bdai_admin',JSON.stringify(d));_o(d);};
+</script>
+</body>
+</html>

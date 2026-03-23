@@ -1,0 +1,68 @@
+name: Build BDAi Admin App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle Wrapper
+        run: |
+          curl -sLo gradle/wrapper/gradle-wrapper.jar \
+            "https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradle/wrapper/gradle-wrapper.jar"
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Set build date
+        run: echo "DATE=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
+
+      - name: Rename APK
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk \
+             app/build/outputs/apk/release/BDAi-Admin-v1.0.0-${{ env.DATE }}.apk
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BDAi-Admin-${{ env.DATE }}
+          path: app/build/outputs/apk/release/BDAi-Admin-*.apk
+          retention-days: 30
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.DATE }}
+          name: BDAi Admin v${{ env.DATE }}
+          files: app/build/outputs/apk/release/BDAi-Admin-*.apk
+          body: |
+            ## 🔒 BDAi Admin App (Private)
+            **Package:** `com.bdai.azad.admin`
+            **Build:** `${{ env.DATE }}`
+            **Signed:** ✅ Debug keystore
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,9 @@
+-optimizationpasses 5
+-repackageclasses 'x'
+-keep class com.bdai.azad.admin.AdminMainActivity { *; }
+-keep class com.bdai.azad.admin.AdminApp { *; }
+-keep class com.bdai.azad.admin.AdminMainActivity$AdminBridge { *; }
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
+-keepattributes JavascriptInterface
+-assumenosideeffects class android.util.Log { public static *** d(...); public static *** v(...); }
